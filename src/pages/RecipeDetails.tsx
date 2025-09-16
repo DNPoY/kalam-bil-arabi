@@ -149,8 +149,12 @@ const RecipeDetails = () => {
         {/* Recipe Header */}
         <Card>
           <CardHeader className="text-center">
-            <div className="w-24 h-24 mx-auto bg-gradient-primary rounded-3xl flex items-center justify-center text-5xl mb-4 shadow-warm">
-              {recipe.image}
+            <div className="w-32 h-32 mx-auto rounded-3xl overflow-hidden shadow-warm mb-4">
+              <img 
+                src={recipe.image} 
+                alt={recipe.name}
+                className="w-full h-full object-cover"
+              />
             </div>
             <CardTitle className="text-2xl text-foreground">{recipe.name}</CardTitle>
             <CardDescription className="text-lg">{recipe.description}</CardDescription>

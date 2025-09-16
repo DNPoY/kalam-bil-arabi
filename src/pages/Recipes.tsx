@@ -126,8 +126,8 @@ const Recipes = () => {
                     <SelectItem value="محشي">محشي</SelectItem>
                     <SelectItem value="شوربة">شوربة</SelectItem>
                     <SelectItem value="طواجن">طواجن</SelectItem>
-                    <SelectItem value="مقلية">مقلية</SelectItem>
-                    <SelectItem value="مشوية">مشوية</SelectItem>
+                    <SelectItem value="سهل وسريع">سهل وسريع</SelectItem>
+                    <SelectItem value="تحضير طويل">تحضير طويل</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -171,8 +171,12 @@ const Recipes = () => {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                      {recipe.image}
+                    <div className="w-16 h-16 rounded-xl overflow-hidden shadow-soft">
+                      <img 
+                        src={recipe.image} 
+                        alt={recipe.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
                     </div>
                     <div>
                       <CardTitle className="text-lg group-hover:text-primary transition-colors">

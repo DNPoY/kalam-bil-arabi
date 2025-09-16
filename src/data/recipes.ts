@@ -1,3 +1,15 @@
+// Import recipe images
+import molokhiaImg from '@/assets/molokhia.jpg';
+import mahshiMalfoufImg from '@/assets/mahshi-malfouf.jpg';
+import kosharyImg from '@/assets/koshary.jpg';
+import fulMedamesImg from '@/assets/ful-medames.jpg';
+import rozBelLabanImg from '@/assets/roz-bel-laban.jpg';
+import bamyaImg from '@/assets/bamya.jpg';
+import waraEinabImg from '@/assets/wara-einab.jpg';
+import shorbatAdasImg from '@/assets/shorbat-adas.jpg';
+
+import { additionalRecipes } from './additional-recipes';
+
 export interface Recipe {
   id: string;
   name: string;
@@ -5,7 +17,7 @@ export interface Recipe {
   prepTime: number;
   cookTime: number;
   difficulty: 'سهل' | 'متوسط' | 'صعب';
-  category: 'محشي' | 'شوربة' | 'طواجن' | 'مقلية' | 'مشوية';
+  category: 'محشي' | 'شوربة' | 'طواجن' | 'سهل وسريع' | 'تحضير طويل';
   ingredients: string[];
   instructions: string[];
   description: string;
@@ -14,11 +26,11 @@ export interface Recipe {
   alternatives?: { [key: string]: string };
 }
 
-export const recipes: Recipe[] = [
+const baseRecipes: Recipe[] = [
   {
     id: 'molokhia',
     name: 'ملوخية بالفراخ',
-    image: '🍲',
+    image: molokhiaImg,
     prepTime: 15,
     cookTime: 45,
     difficulty: 'متوسط',
@@ -54,11 +66,11 @@ export const recipes: Recipe[] = [
   {
     id: 'koshari',
     name: 'كشري',
-    image: '🍚',
+    image: kosharyImg,
     prepTime: 20,
     cookTime: 40,
     difficulty: 'متوسط',
-    category: 'مقلية',
+    category: 'سهل وسريع',
     servings: 6,
     estimatedCost: 45,
     description: 'الأكلة الشعبية الأولى في مصر، مليانة طاقة ومشبعة',
@@ -94,7 +106,7 @@ export const recipes: Recipe[] = [
   {
     id: 'mahshi',
     name: 'محشي كرنب',
-    image: '🥬',
+    image: mahshiMalfoufImg,
     prepTime: 30,
     cookTime: 60,
     difficulty: 'صعب',
@@ -133,11 +145,11 @@ export const recipes: Recipe[] = [
   {
     id: 'roz-bel-laban',
     name: 'أرز باللبن',
-    image: '🍚',
+    image: rozBelLabanImg,
     prepTime: 10,
     cookTime: 30,
     difficulty: 'سهل',
-    category: 'مقلية',
+    category: 'سهل وسريع',
     servings: 4,
     estimatedCost: 25,
     description: 'حلو مصري تقليدي، خفيف ولذيذ ومحبوب من الكل',
@@ -245,23 +257,32 @@ export const recipes: Recipe[] = [
   }
 ];
 
-export const getRecipesByIngredients = (ingredients: string[]): Recipe[] => {
-  return recipes.filter(recipe => {
-    const recipeIngredients = recipe.ingredients.map(ing => ing.toLowerCase());
-    return ingredients.some(ingredient => 
-      recipeIngredients.some(recipeIng => 
-        recipeIng.includes(ingredient.toLowerCase()) || 
-        ingredient.toLowerCase().includes(recipeIng)
+// Combine base recipes with additional recipes
+export const recipes: Recipe[] = [...baseRecipes, ...additionalRecipes];
+
+// Get recipes by ingredients
+export function getRecipesByIngredients(ingredients: string[]): Recipe[] {
+  if (!ingredients || ingredients.length === 0) {
+    return recipes;
+  }
+
+  return recipes.filter(recipe =>
+    recipe.ingredients.some(ingredient =>
+      ingredients.some(userIngredient =>
+        ingredient.toLowerCase().includes(userIngredient.toLowerCase()) ||
+        userIngredient.toLowerCase().includes(ingredient.toLowerCase())
       )
-    );
-  });
-};
+    )
+  );
+}
 
-export const getRecipeById = (id: string): Recipe | undefined => {
+// Get recipe by ID
+export function getRecipeById(id: string): Recipe | undefined {
   return recipes.find(recipe => recipe.id === id);
-};
+}
 
-export const getRandomRecipe = (): Recipe => {
+// Get random recipe
+export function getRandomRecipe(): Recipe {
   const randomIndex = Math.floor(Math.random() * recipes.length);
   return recipes[randomIndex];
 };
