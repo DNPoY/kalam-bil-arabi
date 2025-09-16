@@ -7,9 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Heart, Clock, Users, DollarSign, Play, Pause, Volume2 } from "lucide-react";
 import BottomNavigation from "@/components/ui/bottom-navigation";
 import { getRecipeById, Recipe } from "@/data/recipes";
-import { Rating } from "@/components/ui/rating";
-import { Timer } from "@/components/ui/timer";
-import { ShoppingList } from "@/components/ui/shopping-list";
+import { CookingMode } from "@/components/ui/cooking-mode";
 import { toast } from "sonner";
 
 const RecipeDetails = () => {
@@ -20,9 +18,7 @@ const RecipeDetails = () => {
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [userRating, setUserRating] = useState(0);
-  const [showTimer, setShowTimer] = useState(false);
-  const [showShoppingList, setShowShoppingList] = useState(false);
+  const [showCookingMode, setShowCookingMode] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -39,12 +35,6 @@ const RecipeDetails = () => {
         // فحص المفضلة
         const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
         setIsFavorite(favorites.includes(id));
-        
-        // جلب التقييم المحفوظ
-        const savedRating = localStorage.getItem(`rating_${id}`);
-        if (savedRating) {
-          setUserRating(parseInt(savedRating));
-        }
       } else {
         navigate('/recipes');
       }
@@ -84,17 +74,6 @@ const RecipeDetails = () => {
       selected.toLowerCase().includes(ingredient.toLowerCase())
     );
   };
-  
-  const handleRatingChange = (rating: number) => {
-    setUserRating(rating);
-    localStorage.setItem(`rating_${recipe?.id}`, rating.toString());
-    toast.success(`تم تقييم الوصفة بـ ${rating} نجوم`);
-  };
-  
-  const getMissingIngredients = () => {
-    if (!recipe) return [];
-    return recipe.ingredients.filter(ingredient => !isIngredientAvailable(ingredient));
-  };
 
   const handleTextToSpeech = () => {
     if (!recipe) return;
@@ -128,6 +107,16 @@ const RecipeDetails = () => {
     window.speechSynthesis.speak(utterance);
     toast.success("بدأت قراءة الوصفة");
   };
+
+  if (showCookingMode && recipe) {
+    return (
+      <CookingMode 
+        recipeName={recipe.name}
+        instructions={recipe.instructions}
+        onClose={() => setShowCookingMode(false)}
+      />
+    );
+  }
 
   if (!recipe) {
     return (
@@ -213,30 +202,6 @@ const RecipeDetails = () => {
             </div>
           </CardHeader>
         </Card>
-        
-        {/* Rating */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-xl">⭐</span>
-              قيم الوصفة
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-center">
-              <Rating 
-                value={userRating} 
-                onChange={handleRatingChange}
-                size="lg"
-              />
-            </div>
-            {userRating > 0 && (
-              <p className="text-center text-sm text-muted-foreground mt-2">
-                شكراً لتقييمك! ({userRating}/5)
-              </p>
-            )}
-          </CardContent>
-        </Card>
 
         {/* Audio Controls */}
         <Card>
@@ -264,54 +229,40 @@ const RecipeDetails = () => {
           </CardContent>
         </Card>
 
-        {/* Cooking Tools */}
+        {/* Quick Actions */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <span className="text-xl">🔧</span>
-              أدوات الطبخ
+              <span className="text-xl">⚡</span>
+              إجراءات سريعة
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <Button 
-                onClick={() => setShowTimer(!showTimer)}
-                variant="outline"
-                className="h-auto p-4 flex flex-col space-y-2"
+                onClick={() => setShowTimer(true)}
+                className="h-auto p-4 flex flex-col space-y-2 bg-blue-600 hover:bg-blue-700 text-white"
               >
                 <span className="text-2xl">⏰</span>
                 <span className="text-sm">مؤقت الطبخ</span>
               </Button>
               <Button 
-                onClick={() => setShowShoppingList(!showShoppingList)}
-                variant="outline"
-                className="h-auto p-4 flex flex-col space-y-2"
+                onClick={() => setShowShoppingList(true)}
+                className="h-auto p-4 flex flex-col space-y-2 bg-purple-600 hover:bg-purple-700 text-white"
               >
                 <span className="text-2xl">🛒</span>
                 <span className="text-sm">قائمة التسوق</span>
               </Button>
+              <Button 
+                onClick={() => setShowCookingMode(true)}
+                className="h-auto p-4 flex flex-col space-y-2 bg-green-600 hover:bg-green-700 text-white md:col-span-2"
+              >
+                <span className="text-2xl">👩‍🍳</span>
+                <span className="text-sm">ابدأ الطبخ</span>
+              </Button>
             </div>
           </CardContent>
         </Card>
-        
-        {/* Timer */}
-        {showTimer && (
-          <div className="flex justify-center">
-            <Timer 
-              initialMinutes={recipe.cookTime}
-              title={`مؤقت ${recipe.name}`}
-              onComplete={() => toast.success("انتهى وقت الطبخ! 🍽️")}
-            />
-          </div>
-        )}
-        
-        {/* Shopping List */}
-        {showShoppingList && (
-          <ShoppingList 
-            ingredients={getMissingIngredients()}
-            recipeName={recipe.name}
-          />
-        )}
 
         {/* Ingredients */}
         <Card>
