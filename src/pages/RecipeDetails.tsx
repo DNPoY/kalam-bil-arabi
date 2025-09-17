@@ -238,27 +238,20 @@ const RecipeDetails = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <Button 
-                onClick={() => setShowTimer(true)}
-                className="h-auto p-4 flex flex-col space-y-2 bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                <span className="text-2xl">⏰</span>
-                <span className="text-sm">مؤقت الطبخ</span>
-              </Button>
-              <Button 
-                onClick={() => setShowShoppingList(true)}
-                className="h-auto p-4 flex flex-col space-y-2 bg-purple-600 hover:bg-purple-700 text-white"
-              >
-                <span className="text-2xl">🛒</span>
-                <span className="text-sm">قائمة التسوق</span>
-              </Button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Button 
                 onClick={() => setShowCookingMode(true)}
-                className="h-auto p-4 flex flex-col space-y-2 bg-green-600 hover:bg-green-700 text-white md:col-span-2"
+                className="h-auto p-4 flex flex-col space-y-2 bg-green-600 hover:bg-green-700 text-white"
               >
                 <span className="text-2xl">👩‍🍳</span>
                 <span className="text-sm">ابدأ الطبخ</span>
+              </Button>
+              <Button 
+                onClick={() => navigate('/add-ingredients')}
+                className="h-auto p-4 flex flex-col space-y-2 bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                <span className="text-2xl">🛒</span>
+                <span className="text-sm">إضافة مكونات</span>
               </Button>
             </div>
           </CardContent>

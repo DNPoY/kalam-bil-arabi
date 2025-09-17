@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { ChefHat, LogOut, Settings } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
+import BottomNavigation from "@/components/ui/bottom-navigation";
 import fridgeHero from "@/assets/fridge-hero.jpg";
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
   const navigate = useNavigate();
+  const { user, loading, signOut, isAuthenticated } = useAuth();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -13,6 +18,37 @@ const Index = () => {
     }, 3000);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      navigate('/auth');
+    }
+  }, [loading, isAuthenticated, navigate]);
+
+  const handleSignOut = async () => {
+    const { error } = await signOut();
+    if (!error) {
+      toast.success("تم تسجيل الخروج بنجاح");
+      navigate('/auth');
+    } else {
+      toast.error("حدث خطأ في تسجيل الخروج");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-food-cream via-secondary to-accent/20 flex flex-col items-center justify-center p-6">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4"></div>
+          <p>جاري التحميل...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   if (showSplash) {
     return (
@@ -61,7 +97,30 @@ const Index = () => {
               <div className="w-10 h-10 rounded-xl overflow-hidden">
                 <img src={fridgeHero} alt="في التلاجة" className="w-full h-full object-cover" />
               </div>
-              <h1 className="text-2xl font-bold text-primary">في التلاجة</h1>
+              <div>
+                <h1 className="text-2xl font-bold text-primary">في التلاجة</h1>
+                <p className="text-sm text-muted-foreground">
+                  مرحباً {user?.user_metadata?.display_name || user?.email || 'ضيف'}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/settings')}
+                className="text-muted-foreground hover:text-primary"
+              >
+                <Settings className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSignOut}
+                className="text-muted-foreground hover:text-red-500"
+              >
+                <LogOut className="w-5 h-5" />
+              </Button>
             </div>
           </div>
         </div>
@@ -180,6 +239,8 @@ const Index = () => {
           </div>
         </div>
       </main>
+      
+      <BottomNavigation />
     </div>
   );
 };
