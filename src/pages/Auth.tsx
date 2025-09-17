@@ -118,23 +118,20 @@ const Auth = () => {
       if (error) {
         toast.error("خطأ في إنشاء حساب الضيف");
       } else {
-        // For guest accounts, we'll manually confirm the user to skip email verification
-        if (data.user && !data.user.email_confirmed_at) {
-          // Sign in immediately with the credentials
-          const { error: signInError } = await supabase.auth.signInWithPassword({
-            email: guestEmail,
-            password: guestPassword,
-          });
-          
-          if (signInError) {
-            toast.error("خطأ في تسجيل دخول الضيف");
-          } else {
-            toast.success("مرحباً بك كضيف!");
-            navigate("/");
-          }
+        // Always try to sign in immediately after signup for guest accounts
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email: guestEmail,
+          password: guestPassword,
+        });
+        
+        if (signInError) {
+          toast.error("خطأ في تسجيل دخول الضيف");
         } else {
           toast.success("مرحباً بك كضيف!");
-          navigate("/");
+          // Give the auth state time to update before navigating
+          setTimeout(() => {
+            navigate("/");
+          }, 500);
         }
       }
     } catch (error: any) {
