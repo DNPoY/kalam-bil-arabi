@@ -97,14 +97,17 @@ const Auth = () => {
   const continueAsGuest = async () => {
     setLoading(true);
     try {
-      // Create a guest account with a random email
+      // Create a guest account with a random email and skip email confirmation
       const guestEmail = `guest_${Date.now()}@temp.com`;
       const guestPassword = Math.random().toString(36).substring(2, 15);
       
-      const { error } = await supabase.auth.signUp({
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { data, error } = await supabase.auth.signUp({
         email: guestEmail,
         password: guestPassword,
         options: {
+          emailRedirectTo: redirectUrl,
           data: {
             display_name: "ضيف",
             is_guest: true
@@ -115,8 +118,24 @@ const Auth = () => {
       if (error) {
         toast.error("خطأ في إنشاء حساب الضيف");
       } else {
-        toast.success("مرحباً بك كضيف!");
-        navigate("/");
+        // For guest accounts, we'll manually confirm the user to skip email verification
+        if (data.user && !data.user.email_confirmed_at) {
+          // Sign in immediately with the credentials
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: guestEmail,
+            password: guestPassword,
+          });
+          
+          if (signInError) {
+            toast.error("خطأ في تسجيل دخول الضيف");
+          } else {
+            toast.success("مرحباً بك كضيف!");
+            navigate("/");
+          }
+        } else {
+          toast.success("مرحباً بك كضيف!");
+          navigate("/");
+        }
       }
     } catch (error: any) {
       toast.error("حدث خطأ غير متوقع");
