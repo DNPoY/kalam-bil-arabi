@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { User, UserPlus, UserCheck } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -15,6 +16,7 @@ const Auth = () => {
   const [displayName, setDisplayName] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { signInAsGuest } = useAuth();
 
   useEffect(() => {
     const checkUser = async () => {
@@ -94,51 +96,10 @@ const Auth = () => {
     }
   };
 
-  const continueAsGuest = async () => {
-    setLoading(true);
-    try {
-      // Create a guest account with a random email and skip email confirmation
-      const guestEmail = `guest_${Date.now()}@temp.com`;
-      const guestPassword = Math.random().toString(36).substring(2, 15);
-      
-      const redirectUrl = `${window.location.origin}/`;
-      
-      const { data, error } = await supabase.auth.signUp({
-        email: guestEmail,
-        password: guestPassword,
-        options: {
-          emailRedirectTo: redirectUrl,
-          data: {
-            display_name: "ضيف",
-            is_guest: true
-          }
-        }
-      });
-
-      if (error) {
-        toast.error("خطأ في إنشاء حساب الضيف");
-      } else {
-        // Always try to sign in immediately after signup for guest accounts
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-          email: guestEmail,
-          password: guestPassword,
-        });
-        
-        if (signInError) {
-          toast.error("خطأ في تسجيل دخول الضيف");
-        } else {
-          toast.success("مرحباً بك كضيف!");
-          // Give the auth state time to update before navigating
-          setTimeout(() => {
-            navigate("/");
-          }, 500);
-        }
-      }
-    } catch (error: any) {
-      toast.error("حدث خطأ غير متوقع");
-    } finally {
-      setLoading(false);
-    }
+  const continueAsGuest = () => {
+    signInAsGuest();
+    toast.success("مرحباً بك كضيف!");
+    navigate("/");
   };
 
   return (
