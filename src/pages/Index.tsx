@@ -231,6 +231,14 @@ const Index = () => {
             <Button 
               variant="ghost" 
               className="h-auto p-4 flex flex-col space-y-2 hover:bg-accent/10"
+              onClick={() => navigate('/meal-planner')}
+            >
+              <span className="text-2xl">📅</span>
+              <span className="text-sm">مخطط الوجبات</span>
+            </Button>
+            <Button 
+              variant="ghost" 
+              className="h-auto p-4 flex flex-col space-y-2 hover:bg-accent/10"
               onClick={() => navigate('/settings')}
             >
               <span className="text-2xl">⚙️</span>

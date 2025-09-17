@@ -8,6 +8,7 @@ import { Heart, Clock, Users, DollarSign, Play, Pause, Volume2 } from "lucide-re
 import BottomNavigation from "@/components/ui/bottom-navigation";
 import { getRecipeById, Recipe } from "@/data/recipes";
 import { CookingMode } from "@/components/ui/cooking-mode";
+import { RecipeRating } from "@/components/ui/recipe-rating";
 import { toast } from "sonner";
 
 const RecipeDetails = () => {
@@ -374,6 +375,9 @@ const RecipeDetails = () => {
             🔍 ابحث عن وصفات أخرى
           </Button>
         </div>
+
+        {/* Recipe Rating */}
+        <RecipeRating recipeId={recipe.id} recipeName={recipe.name} />
       </main>
 
       <BottomNavigation />

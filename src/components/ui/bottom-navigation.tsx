@@ -22,14 +22,14 @@ const BottomNavigation = () => {
       path: "/recipes" 
     },
     { 
+      icon: "🛒", 
+      label: "التسوق", 
+      path: "/shopping-list" 
+    },
+    { 
       icon: "⭐", 
       label: "المفضلة", 
       path: "/favorites" 
-    },
-    { 
-      icon: "🔍", 
-      label: "بحث", 
-      path: "/search" 
     }
   ];
 
