@@ -63,9 +63,9 @@ const AIRecommendations = () => {
     const mealPlan = JSON.parse(localStorage.getItem('mealPlan') || '{}');
     
     // تحليل التفضيلات
-    const favoriteRecipes = favorites.map((id: string) => recipes.find(r => r.id === id)).filter(Boolean);
-    const favoriteCategories = [...new Set(favoriteRecipes.map((r: Recipe) => r.category))];
-    const preferredDifficulty = [...new Set(favoriteRecipes.map((r: Recipe) => r.difficulty))];
+    const favoriteRecipes = favorites.map((id: string) => recipes.find(r => r.id === id)).filter(Boolean) as Recipe[];
+    const favoriteCategories = [...new Set(favoriteRecipes.map((r: Recipe) => r.category))] as string[];
+    const preferredDifficulty = [...new Set(favoriteRecipes.map((r: Recipe) => r.difficulty))] as string[];
     
     setUserPreferences({
       favoriteCategories,

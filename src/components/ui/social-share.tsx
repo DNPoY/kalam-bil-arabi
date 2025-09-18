@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Share2, Facebook, MessageCircle, Copy, Heart, Star } from "lucide-react";
+import { Share2, Facebook, MessageCircle, Copy, Heart, Star, Twitter, Instagram, Mail } from "lucide-react";
 import { toast } from "sonner";
 
 interface SocialShareProps {
@@ -26,9 +26,30 @@ export const SocialShare = ({ recipeName, recipeDescription, recipeId, rating }:
   };
 
   const shareToFacebook = () => {
-    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&t=${encodeURIComponent(shareText)}`;
     window.open(url, '_blank', 'width=600,height=400');
     toast.success("تم فتح فيسبوك للمشاركة");
+  };
+
+  const shareToTwitter = () => {
+    const text = encodeURIComponent(`${shareText}\n${window.location.href}`);
+    const url = `https://twitter.com/intent/tweet?text=${text}`;
+    window.open(url, '_blank', 'width=600,height=400');
+    toast.success("تم فتح تويتر للمشاركة");
+  };
+
+  const shareToInstagram = () => {
+    // Instagram doesn't support direct text sharing, so we'll copy to clipboard
+    copyToClipboard();
+    toast.info("تم نسخ النص - يمكنك لصقه في إنستغرام");
+  };
+
+  const shareByEmail = () => {
+    const subject = encodeURIComponent(`وصفة ${recipeName}`);
+    const body = encodeURIComponent(`${shareText}\n\n${recipeDescription}\n\nمن تطبيق "في التلاجة"`);
+    const url = `mailto:?subject=${subject}&body=${body}`;
+    window.location.href = url;
+    toast.success("تم فتح تطبيق البريد الإلكتروني");
   };
 
   const copyToClipboard = async () => {
@@ -97,6 +118,30 @@ export const SocialShare = ({ recipeName, recipeDescription, recipeId, rating }:
           </Button>
           
           <Button 
+            onClick={shareToTwitter}
+            className="bg-sky-500 hover:bg-sky-600 text-white"
+          >
+            <Twitter className="w-4 h-4 ml-2" />
+            تويتر
+          </Button>
+          
+          <Button 
+            onClick={shareToInstagram}
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+          >
+            <Instagram className="w-4 h-4 ml-2" />
+            إنستغرام
+          </Button>
+          
+          <Button 
+            onClick={shareByEmail}
+            variant="outline"
+          >
+            <Mail className="w-4 h-4 ml-2" />
+            إيميل
+          </Button>
+          
+          <Button 
             onClick={copyToClipboard}
             variant="outline"
           >
@@ -111,6 +156,15 @@ export const SocialShare = ({ recipeName, recipeDescription, recipeId, rating }:
           >
             <Heart className="w-4 h-4 ml-2" />
             مفضلة
+          </Button>
+          
+          <Button 
+            onClick={shareNatively}
+            variant="outline"
+            className="text-primary"
+          >
+            <Share2 className="w-4 h-4 ml-2" />
+            مشاركة
           </Button>
         </div>
 

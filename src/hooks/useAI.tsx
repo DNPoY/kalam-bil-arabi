@@ -157,29 +157,79 @@ export const useAI = () => {
     const plan: { [day: string]: Recipe[] } = {};
 
     days.forEach(day => {
-      // توزيع متوازن للفئات
-      const dayRecipes = [];
+      const dayRecipes: Recipe[] = [];
       
       // إفطار سهل
-      const breakfast = recipes.filter(r => 
+      const breakfastOptions = recipes.filter(r => 
         r.category === 'سهل وسريع' && r.cookTime <= 20
-      )[Math.floor(Math.random() * 3)];
+      );
+      if (breakfastOptions.length > 0) {
+        const breakfast = breakfastOptions[Math.floor(Math.random() * Math.min(3, breakfastOptions.length))];
+        if (breakfast) dayRecipes.push(breakfast);
+      }
       
       // غداء متنوع
-      const lunch = recipes.filter(r => 
+      const lunchOptions = recipes.filter(r => 
         userBehavior.preferredCategories.length === 0 || 
         userBehavior.preferredCategories.includes(r.category)
-      )[Math.floor(Math.random() * 5)];
+      );
+      if (lunchOptions.length > 0) {
+        const lunch = lunchOptions[Math.floor(Math.random() * Math.min(5, lunchOptions.length))];
+        if (lunch) dayRecipes.push(lunch);
+      }
       
       // عشاء خفيف
-      const dinner = recipes.filter(r => 
-        r.cookTime <= 30
-      )[Math.floor(Math.random() * 3)];
+      const dinnerOptions = recipes.filter(r => 
+        r.cookTime <= 30 && !dayRecipes.includes(r)
+      );
+      if (dinnerOptions.length > 0) {
+        const dinner = dinnerOptions[Math.floor(Math.random() * Math.min(3, dinnerOptions.length))];
+        if (dinner) dayRecipes.push(dinner);
+      }
 
-      plan[day] = [breakfast, lunch, dinner].filter(Boolean);
+      plan[day] = dayRecipes;
     });
 
     return plan;
+  };
+
+  const generateSmartSuggestions = (currentIngredients: string[]) => {
+    const suggestions = [];
+    
+    // اقتراح وصفات بناءً على المكونات المتاحة
+    const compatibleRecipes = recipes.filter(recipe => 
+      recipe.ingredients.some(ingredient =>
+        currentIngredients.some(current => 
+          ingredient.toLowerCase().includes(current.toLowerCase()) ||
+          current.toLowerCase().includes(ingredient.toLowerCase())
+        )
+      )
+    ).slice(0, 5);
+
+    suggestions.push({
+      type: 'recipes',
+      title: 'وصفات مقترحة بناءً على مكوناتك',
+      data: compatibleRecipes
+    });
+
+    // اقتراح مكونات مكملة
+    const complementaryIngredients = [];
+    compatibleRecipes.forEach(recipe => {
+      recipe.ingredients.forEach(ingredient => {
+        if (!currentIngredients.includes(ingredient) && 
+            !complementaryIngredients.includes(ingredient)) {
+          complementaryIngredients.push(ingredient);
+        }
+      });
+    });
+
+    suggestions.push({
+      type: 'ingredients',
+      title: 'مكونات مقترحة لتكملة وصفاتك',
+      data: complementaryIngredients.slice(0, 8)
+    });
+
+    return suggestions;
   };
 
   const predictTrends = () => {
@@ -212,6 +262,7 @@ export const useAI = () => {
     getPersonalizedRecommendations,
     optimizeShoppingList,
     generateWeeklyPlan,
+    generateSmartSuggestions,
     predictTrends
   };
 };

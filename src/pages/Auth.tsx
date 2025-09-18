@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { User, UserPlus, UserCheck } from "lucide-react";
+import { FaGoogle, FaFacebookF } from "react-icons/fa";
 import { useAuth } from "@/hooks/useAuth";
 
 const Auth = () => {
@@ -102,6 +103,50 @@ const Auth = () => {
     navigate("/");
   };
 
+  const signInWithGoogle = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`
+        }
+      });
+      
+      if (error) {
+        toast.error("خطأ في تسجيل الدخول بجوجل");
+        console.error('Google auth error:', error);
+      }
+    } catch (error) {
+      toast.error("خطأ في تسجيل الدخول بجوجل");
+      console.error('Google auth error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signInWithFacebook = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'facebook',
+        options: {
+          redirectTo: `${window.location.origin}/`
+        }
+      });
+      
+      if (error) {
+        toast.error("خطأ في تسجيل الدخول بفيسبوك");
+        console.error('Facebook auth error:', error);
+      }
+    } catch (error) {
+      toast.error("خطأ في تسجيل الدخول بفيسبوك");
+      console.error('Facebook auth error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
@@ -194,7 +239,38 @@ const Auth = () => {
             </TabsContent>
           </Tabs>
           
-          <div className="mt-6 pt-6 border-t">
+          <div className="mt-6 pt-6 border-t space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <Button 
+                onClick={signInWithGoogle}
+                variant="outline" 
+                className="w-full bg-white hover:bg-gray-50 text-gray-700 border-gray-300"
+                disabled={loading}
+              >
+                <FaGoogle className="ml-2 h-4 w-4 text-red-500" />
+                جوجل
+              </Button>
+              
+              <Button 
+                onClick={signInWithFacebook}
+                variant="outline" 
+                className="w-full bg-white hover:bg-gray-50 text-gray-700 border-gray-300"
+                disabled={loading}
+              >
+                <FaFacebookF className="ml-2 h-4 w-4 text-blue-600" />
+                فيسبوك
+              </Button>
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">أو</span>
+              </div>
+            </div>
+            
             <Button 
               variant="outline" 
               onClick={continueAsGuest} 
