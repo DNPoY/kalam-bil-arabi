@@ -203,7 +203,7 @@ const Index = () => {
         {/* Quick Actions */}
         <div className="bg-card rounded-2xl p-6 shadow-soft border">
           <h3 className="text-xl font-bold text-foreground mb-4 text-center">إيه اللي تقدر تعمله كمان؟</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <Button 
               variant="ghost" 
               className="h-auto p-4 flex flex-col space-y-2 hover:bg-accent/10"
@@ -212,6 +212,25 @@ const Index = () => {
               <span className="text-2xl">📖</span>
               <span className="text-sm">تصفح الوصفات</span>
             </Button>
+            <Button 
+              variant="ghost" 
+              className="h-auto p-4 flex flex-col space-y-2 hover:bg-accent/10"
+              onClick={() => navigate('/community')}
+            >
+              <span className="text-2xl">👥</span>
+              <span className="text-sm">مجتمع الطباخين</span>
+            </Button>
+            <Button 
+              variant="ghost" 
+              className="h-auto p-4 flex flex-col space-y-2 hover:bg-accent/10"
+              onClick={() => navigate('/ai-recommendations')}
+            >
+              <span className="text-2xl">🤖</span>
+              <span className="text-sm">الذكاء الاصطناعي</span>
+            </Button>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
             <Button 
               variant="ghost" 
               className="h-auto p-4 flex flex-col space-y-2 hover:bg-accent/10"
@@ -231,10 +250,10 @@ const Index = () => {
             <Button 
               variant="ghost" 
               className="h-auto p-4 flex flex-col space-y-2 hover:bg-accent/10"
-              onClick={() => navigate('/meal-planner')}
+              onClick={() => navigate('/shopping-list')}
             >
-              <span className="text-2xl">📅</span>
-              <span className="text-sm">مخطط الوجبات</span>
+              <span className="text-2xl">🛒</span>
+              <span className="text-sm">قائمة التسوق</span>
             </Button>
             <Button 
               variant="ghost" 

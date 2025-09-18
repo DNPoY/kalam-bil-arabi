@@ -9,6 +9,7 @@ import BottomNavigation from "@/components/ui/bottom-navigation";
 import { getRecipeById, Recipe } from "@/data/recipes";
 import { CookingMode } from "@/components/ui/cooking-mode";
 import { RecipeRating } from "@/components/ui/recipe-rating";
+import { SocialShare } from "@/components/ui/social-share";
 import { toast } from "sonner";
 
 const RecipeDetails = () => {
@@ -378,6 +379,14 @@ const RecipeDetails = () => {
 
         {/* Recipe Rating */}
         <RecipeRating recipeId={recipe.id} recipeName={recipe.name} />
+
+        {/* Social Share */}
+        <SocialShare 
+          recipeName={recipe.name}
+          recipeDescription={recipe.description}
+          recipeId={recipe.id}
+          rating={4} // يمكن جلب التقييم الفعلي من localStorage
+        />
       </main>
 
       <BottomNavigation />

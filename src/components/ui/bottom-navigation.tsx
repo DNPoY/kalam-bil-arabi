@@ -12,9 +12,9 @@ const BottomNavigation = () => {
       path: "/" 
     },
     { 
-      icon: "🥬", 
-      label: "المكونات", 
-      path: "/add-ingredients" 
+      icon: "👥", 
+      label: "المجتمع", 
+      path: "/community" 
     },
     { 
       icon: "📖", 
@@ -22,9 +22,9 @@ const BottomNavigation = () => {
       path: "/recipes" 
     },
     { 
-      icon: "🛒", 
-      label: "التسوق", 
-      path: "/shopping-list" 
+      icon: "🤖", 
+      label: "الذكاء الاصطناعي", 
+      path: "/ai-recommendations" 
     },
     { 
       icon: "⭐", 

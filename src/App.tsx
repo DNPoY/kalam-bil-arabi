@@ -15,6 +15,8 @@ import ShoppingListPage from "./pages/ShoppingList";
 import MealPlanner from "./pages/MealPlanner";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import Community from "./pages/Community";
+import AIRecommendations from "./pages/AIRecommendations";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +38,8 @@ const App = () => (
           <Route path="/shopping-list" element={<ShoppingListPage />} />
           <Route path="/meal-planner" element={<MealPlanner />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/ai-recommendations" element={<AIRecommendations />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
