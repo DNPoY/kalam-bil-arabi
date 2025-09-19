@@ -13,6 +13,9 @@ const config: CapacitorConfig = {
       launchShowDuration: 2000,
       backgroundColor: "#ffffff",
       showSpinner: false
+    },
+    App: {
+      appUrlScheme: "app.lovable.ee7c66bbb34b4d68b7814288b6d07871"
     }
   }
 };

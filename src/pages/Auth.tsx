@@ -37,7 +37,10 @@ const Auth = () => {
 
     setLoading(true);
     try {
-      const redirectUrl = `${window.location.origin}/`;
+      // Configure redirect URL for both web and mobile
+      const redirectUrl = window.location.protocol === 'file:' || window.location.protocol === 'app:' 
+        ? 'app.lovable.ee7c66bbb34b4d68b7814288b6d07871://auth'
+        : `${window.location.origin}/`;
       
       const { error } = await supabase.auth.signUp({
         email,
@@ -106,10 +109,15 @@ const Auth = () => {
   const signInWithGoogle = async () => {
     setLoading(true);
     try {
+      // Configure redirect URL for both web and mobile
+      const redirectUrl = window.location.protocol === 'file:' || window.location.protocol === 'app:' 
+        ? 'app.lovable.ee7c66bbb34b4d68b7814288b6d07871://auth'
+        : `${window.location.origin}/`;
+        
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/`
+          redirectTo: redirectUrl
         }
       });
       
@@ -128,10 +136,15 @@ const Auth = () => {
   const signInWithFacebook = async () => {
     setLoading(true);
     try {
+      // Configure redirect URL for both web and mobile
+      const redirectUrl = window.location.protocol === 'file:' || window.location.protocol === 'app:' 
+        ? 'app.lovable.ee7c66bbb34b4d68b7814288b6d07871://auth'
+        : `${window.location.origin}/`;
+        
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'facebook',
         options: {
-          redirectTo: `${window.location.origin}/`
+          redirectTo: redirectUrl
         }
       });
       
