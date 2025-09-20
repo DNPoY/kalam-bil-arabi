@@ -108,6 +108,14 @@ const Index = () => {
               <Button
                 variant="ghost"
                 size="sm"
+                onClick={() => navigate('/recipe-management')}
+                className="text-muted-foreground hover:text-primary"
+              >
+                <ChefHat className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => navigate('/settings')}
                 className="text-muted-foreground hover:text-primary"
               >

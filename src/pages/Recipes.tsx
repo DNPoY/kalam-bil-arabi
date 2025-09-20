@@ -6,10 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Clock, ChefHat, Users } from "lucide-react";
 import BottomNavigation from "@/components/ui/bottom-navigation";
-import { recipes, getRecipesByIngredients, Recipe } from "@/data/recipes";
+import { useRecipes } from '@/hooks/useRecipes';
+import { getRecipesByIngredients } from '@/data/hybridRecipes';
 
 const Recipes = () => {
-  const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>(recipes);
+  const { recipes: databaseRecipes, loading } = useRecipes();
+  const [filteredRecipes, setFilteredRecipes] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("all");
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
@@ -21,14 +23,18 @@ const Recipes = () => {
     if (storedIngredients) {
       const ingredients = JSON.parse(storedIngredients);
       setSelectedIngredients(ingredients);
-      setFilteredRecipes(getRecipesByIngredients(ingredients));
+      setFilteredRecipes(getRecipesByIngredients(ingredients, databaseRecipes));
+    } else if (!loading) {
+      setFilteredRecipes(getRecipesByIngredients([], databaseRecipes));
     }
-  }, []);
+  }, [databaseRecipes, loading]);
 
   useEffect(() => {
+    if (loading) return;
+    
     let filtered = selectedIngredients.length > 0 
-      ? getRecipesByIngredients(selectedIngredients)
-      : recipes;
+      ? getRecipesByIngredients(selectedIngredients, databaseRecipes)
+      : getRecipesByIngredients([], databaseRecipes);
 
     if (selectedCategory !== "all") {
       filtered = filtered.filter(recipe => recipe.category === selectedCategory);
@@ -39,7 +45,7 @@ const Recipes = () => {
     }
 
     setFilteredRecipes(filtered);
-  }, [selectedCategory, selectedDifficulty, selectedIngredients]);
+  }, [selectedCategory, selectedDifficulty, selectedIngredients, databaseRecipes, loading]);
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -53,7 +59,7 @@ const Recipes = () => {
   const clearIngredients = () => {
     localStorage.removeItem('selectedIngredients');
     setSelectedIngredients([]);
-    setFilteredRecipes(recipes);
+    setFilteredRecipes(getRecipesByIngredients([], databaseRecipes));
   };
 
   return (
@@ -70,7 +76,11 @@ const Recipes = () => {
               ← رجوع
             </Button>
             <h1 className="text-xl font-bold text-primary">الوصفات المتاحة</h1>
-            <div className="w-16"></div>
+            <div className="w-16">
+              {loading ? (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+              ) : null}
+            </div>
           </div>
         </div>
       </header>

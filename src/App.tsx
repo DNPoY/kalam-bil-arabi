@@ -14,6 +14,7 @@ import Settings from "./pages/Settings";
 import ShoppingListPage from "./pages/ShoppingList";
 import MealPlanner from "./pages/MealPlanner";
 import Auth from "./pages/Auth";
+import RecipeManagement from "./pages/RecipeManagement";
 import NotFound from "./pages/NotFound";
 import Community from "./pages/Community";
 import AIRecommendations from "./pages/AIRecommendations";
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/shopping-list" element={<ShoppingListPage />} />
           <Route path="/meal-planner" element={<MealPlanner />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/recipe-management" element={<RecipeManagement />} />
           <Route path="/community" element={<Community />} />
           <Route path="/ai-recommendations" element={<AIRecommendations />} />
           <Route path="*" element={<NotFound />} />
