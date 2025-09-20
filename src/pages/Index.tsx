@@ -5,6 +5,9 @@ import { ChefHat, LogOut, Settings } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import BottomNavigation from "@/components/ui/bottom-navigation";
+import { OfflineIndicator } from "@/components/ui/offline-indicator";
+import { VoiceAssistant } from "@/components/ui/voice-assistant";
+import { QuickActions } from "@/components/ui/quick-actions";
 import fridgeHero from "@/assets/fridge-hero.jpg";
 
 const Index = () => {
@@ -89,6 +92,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-food-cream to-secondary/30">
+      <OfflineIndicator />
+      
       {/* Header */}
       <header className="bg-card/80 backdrop-blur-sm shadow-soft border-b">
         <div className="container mx-auto px-4 py-4">
@@ -208,71 +213,27 @@ const Index = () => {
           </div>
         </div>
 
+        {/* Voice Assistant */}
+        <VoiceAssistant 
+          onCommand={(command) => {
+            const lowerCommand = command.toLowerCase();
+            if (lowerCommand.includes('أضف مكونات') || lowerCommand.includes('مكونات')) {
+              navigate('/add-ingredients');
+            } else if (lowerCommand.includes('وصفات') || lowerCommand.includes('ابحث')) {
+              navigate('/recipes');
+            } else if (lowerCommand.includes('مفضلة')) {
+              navigate('/favorites');
+            } else if (lowerCommand.includes('عشوائي')) {
+              navigate('/recipe/molokhia');
+            }
+          }}
+        />
+
         {/* Quick Actions */}
-        <div className="bg-card rounded-2xl p-6 shadow-soft border">
-          <h3 className="text-xl font-bold text-foreground mb-4 text-center">إيه اللي تقدر تعمله كمان؟</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <Button 
-              variant="ghost" 
-              className="h-auto p-4 flex flex-col space-y-2 hover:bg-accent/10"
-              onClick={() => navigate('/recipes')}
-            >
-              <span className="text-2xl">📖</span>
-              <span className="text-sm">تصفح الوصفات</span>
-            </Button>
-            <Button 
-              variant="ghost" 
-              className="h-auto p-4 flex flex-col space-y-2 hover:bg-accent/10"
-              onClick={() => navigate('/community')}
-            >
-              <span className="text-2xl">👥</span>
-              <span className="text-sm">مجتمع الطباخين</span>
-            </Button>
-            <Button 
-              variant="ghost" 
-              className="h-auto p-4 flex flex-col space-y-2 hover:bg-accent/10"
-              onClick={() => navigate('/ai-recommendations')}
-            >
-              <span className="text-2xl">🤖</span>
-              <span className="text-sm">الذكاء الاصطناعي</span>
-            </Button>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-            <Button 
-              variant="ghost" 
-              className="h-auto p-4 flex flex-col space-y-2 hover:bg-accent/10"
-              onClick={() => navigate('/favorites')}
-            >
-              <span className="text-2xl">⭐</span>
-              <span className="text-sm">المفضلة</span>
-            </Button>
-            <Button 
-              variant="ghost" 
-              className="h-auto p-4 flex flex-col space-y-2 hover:bg-accent/10"
-              onClick={() => navigate('/search')}
-            >
-              <span className="text-2xl">🔍</span>
-              <span className="text-sm">بحث</span>
-            </Button>
-            <Button 
-              variant="ghost" 
-              className="h-auto p-4 flex flex-col space-y-2 hover:bg-accent/10"
-              onClick={() => navigate('/shopping-list')}
-            >
-              <span className="text-2xl">🛒</span>
-              <span className="text-sm">قائمة التسوق</span>
-            </Button>
-            <Button 
-              variant="ghost" 
-              className="h-auto p-4 flex flex-col space-y-2 hover:bg-accent/10"
-              onClick={() => navigate('/settings')}
-            >
-              <span className="text-2xl">⚙️</span>
-              <span className="text-sm">الإعدادات</span>
-            </Button>
-          </div>
-        </div>
+        <QuickActions 
+          title="إيه اللي تقدر تعمله كمان؟"
+          columns={3}
+        />
       </main>
       
       <BottomNavigation />

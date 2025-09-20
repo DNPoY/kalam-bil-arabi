@@ -10,6 +10,10 @@ import { getRecipeById, Recipe } from "@/data/recipes";
 import { CookingMode } from "@/components/ui/cooking-mode";
 import { RecipeRating } from "@/components/ui/recipe-rating";
 import { SocialShare } from "@/components/ui/social-share";
+import { NutritionInfo } from "@/components/ui/nutrition-info";
+import { RecipeSuggestions } from "@/components/ui/recipe-suggestions";
+import { VoiceAssistant } from "@/components/ui/voice-assistant";
+import { RecipeAnalytics } from "@/components/ui/recipe-analytics";
 import { toast } from "sonner";
 
 const RecipeDetails = () => {
@@ -380,12 +384,43 @@ const RecipeDetails = () => {
         {/* Recipe Rating */}
         <RecipeRating recipeId={recipe.id} recipeName={recipe.name} />
 
+        {/* Nutrition Information */}
+        <NutritionInfo 
+          servings={recipe.servings}
+          estimatedCalories={recipe.estimatedCost ? recipe.estimatedCost * 8 : undefined}
+          ingredients={recipe.ingredients}
+        />
+
+        {/* Voice Assistant */}
+        <VoiceAssistant 
+          onCommand={(command) => {
+            if (command.includes('ابدأ الطبخ')) {
+              setShowCookingMode(true);
+            } else if (command.includes('مفضلة')) {
+              toggleFavorite();
+            }
+          }}
+        />
+
         {/* Social Share */}
         <SocialShare 
           recipeName={recipe.name}
           recipeDescription={recipe.description}
           recipeId={recipe.id}
           rating={4} // يمكن جلب التقييم الفعلي من localStorage
+        />
+
+        {/* Recipe Suggestions */}
+        <RecipeSuggestions 
+          currentRecipeId={recipe.id}
+          userIngredients={selectedIngredients}
+          maxSuggestions={4}
+        />
+
+        {/* Recipe Analytics */}
+        <RecipeAnalytics 
+          recipeId={recipe.id}
+          recipeName={recipe.name}
         />
       </main>
 

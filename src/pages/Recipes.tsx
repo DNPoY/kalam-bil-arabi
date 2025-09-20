@@ -8,6 +8,10 @@ import { Clock, ChefHat, Users } from "lucide-react";
 import BottomNavigation from "@/components/ui/bottom-navigation";
 import { useRecipes } from '@/hooks/useRecipes';
 import { getRecipesByIngredients } from '@/data/hybridRecipes';
+import { RecipeCard } from '@/components/ui/recipe-card';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { OfflineIndicator } from '@/components/ui/offline-indicator';
+import { RecipeFilters, RecipeFilters as RecipeFiltersType } from '@/components/ui/recipe-filters';
 
 const Recipes = () => {
   const { recipes: databaseRecipes, loading } = useRecipes();
@@ -15,6 +19,16 @@ const Recipes = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("all");
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
+  const [advancedFilters, setAdvancedFilters] = useState<RecipeFiltersType>({
+    categories: [],
+    difficulties: [],
+    maxCookTime: 120,
+    maxCost: 200,
+    minServings: 1,
+    maxServings: 10,
+    hasAlternatives: false,
+    quickOnly: false
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,8 +58,28 @@ const Recipes = () => {
       filtered = filtered.filter(recipe => recipe.difficulty === selectedDifficulty);
     }
 
+    // تطبيق الفلاتر المتقدمة
+    if (advancedFilters.categories.length > 0) {
+      filtered = filtered.filter(recipe => advancedFilters.categories.includes(recipe.category));
+    }
+    
+    if (advancedFilters.difficulties.length > 0) {
+      filtered = filtered.filter(recipe => advancedFilters.difficulties.includes(recipe.difficulty));
+    }
+    
+    filtered = filtered.filter(recipe => {
+      const totalTime = recipe.prepTime + recipe.cookTime;
+      const cost = recipe.estimatedCost || 0;
+      
+      return totalTime <= advancedFilters.maxCookTime &&
+             cost <= advancedFilters.maxCost &&
+             recipe.servings >= advancedFilters.minServings &&
+             recipe.servings <= advancedFilters.maxServings &&
+             (!advancedFilters.hasAlternatives || (recipe.alternatives && Object.keys(recipe.alternatives).length > 0)) &&
+             (!advancedFilters.quickOnly || totalTime <= 30);
+    });
     setFilteredRecipes(filtered);
-  }, [selectedCategory, selectedDifficulty, selectedIngredients, databaseRecipes, loading]);
+  }, [selectedCategory, selectedDifficulty, selectedIngredients, advancedFilters, databaseRecipes, loading]);
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -64,6 +98,8 @@ const Recipes = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-food-cream to-secondary/30 pb-20">
+      <OfflineIndicator />
+      
       {/* Header */}
       <header className="bg-card/80 backdrop-blur-sm shadow-soft border-b sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
@@ -119,46 +155,10 @@ const Recipes = () => {
         )}
 
         {/* Filters */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">فلترة النتائج</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">نوع الطبق</label>
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر نوع الطبق" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">كل الأنواع</SelectItem>
-                    <SelectItem value="محشي">محشي</SelectItem>
-                    <SelectItem value="شوربة">شوربة</SelectItem>
-                    <SelectItem value="طواجن">طواجن</SelectItem>
-                    <SelectItem value="سهل وسريع">سهل وسريع</SelectItem>
-                    <SelectItem value="تحضير طويل">تحضير طويل</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">مستوى الصعوبة</label>
-                <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر مستوى الصعوبة" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">كل المستويات</SelectItem>
-                    <SelectItem value="سهل">سهل</SelectItem>
-                    <SelectItem value="متوسط">متوسط</SelectItem>
-                    <SelectItem value="صعب">صعب</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <RecipeFilters 
+          onFiltersChange={setAdvancedFilters}
+          initialFilters={advancedFilters}
+        />
 
         {/* Results Summary */}
         <div className="text-center">
@@ -172,96 +172,35 @@ const Recipes = () => {
 
         {/* Recipes Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredRecipes.map((recipe) => (
-            <Card 
-              key={recipe.id} 
-              className="hover:shadow-warm transition-all duration-300 cursor-pointer group border border-border/50 hover:border-primary/20"
-              onClick={() => navigate(`/recipe/${recipe.id}`)}
-            >
-              <CardHeader>
-                <div className="flex items-start justify-between">
+          {loading ? (
+            Array.from({ length: 6 }).map((_, index) => (
+              <Card key={index} className="animate-pulse">
+                <CardHeader>
                   <div className="flex items-center gap-3">
-                    <div className="w-16 h-16 rounded-xl overflow-hidden shadow-soft">
-                      <img 
-                        src={recipe.image} 
-                        alt={recipe.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                      />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg group-hover:text-primary transition-colors">
-                        {recipe.name}
-                      </CardTitle>
-                      <Badge variant="outline" className="mt-1">
-                        {recipe.category}
-                      </Badge>
+                    <div className="w-16 h-16 bg-muted rounded-xl"></div>
+                    <div className="space-y-2 flex-1">
+                      <div className="h-4 bg-muted rounded w-3/4"></div>
+                      <div className="h-3 bg-muted rounded w-1/2"></div>
                     </div>
                   </div>
-                </div>
-              </CardHeader>
-
-              <CardContent className="space-y-4">
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {recipe.description}
-                </p>
-
-                {/* Recipe Info */}
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1 text-muted-foreground">
-                      <Clock className="w-4 h-4" />
-                      <span>{recipe.prepTime + recipe.cookTime} د</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-muted-foreground">
-                      <Users className="w-4 h-4" />
-                      <span>{recipe.servings} أشخاص</span>
-                    </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="h-3 bg-muted rounded"></div>
+                    <div className="h-3 bg-muted rounded w-2/3"></div>
                   </div>
-                  
-                  <Badge 
-                    variant="outline" 
-                    className={`${getDifficultyColor(recipe.difficulty)}`}
-                  >
-                    {recipe.difficulty}
-                  </Badge>
-                </div>
-
-                {/* Price */}
-                {recipe.estimatedCost && (
-                  <div className="text-sm">
-                    <span className="text-muted-foreground">التكلفة التقريبية: </span>
-                    <span className="font-medium text-green-600">{recipe.estimatedCost} جنيه</span>
-                  </div>
-                )}
-
-                {/* Available Ingredients */}
-                {selectedIngredients.length > 0 && (
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-2">المكونات المتاحة لديك:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {recipe.ingredients
-                        .filter(ingredient => 
-                          selectedIngredients.some(selected => 
-                            ingredient.toLowerCase().includes(selected.toLowerCase()) ||
-                            selected.toLowerCase().includes(ingredient.toLowerCase())
-                          )
-                        )
-                        .slice(0, 3)
-                        .map((ingredient, index) => (
-                          <Badge 
-                            key={index} 
-                            variant="secondary" 
-                            className="text-xs bg-green-100 text-green-700 border-green-200"
-                          >
-                            {ingredient}
-                          </Badge>
-                        ))
-                      }
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            filteredRecipes.map((recipe) => (
+              <RecipeCard
+                key={recipe.id}
+                recipe={recipe}
+                showIngredientMatch={selectedIngredients.length > 0}
+                availableIngredients={selectedIngredients}
+              />
+            ))
           ))}
         </div>
 

@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Moon, Sun, Bell, Globe, Trash2, Heart, Book } from "lucide-react";
 import BottomNavigation from "@/components/ui/bottom-navigation";
+import { PerformanceMonitor } from "@/components/ui/performance-monitor";
 import { toast } from "sonner";
 
 const Settings = () => {
@@ -269,6 +270,9 @@ const Settings = () => {
             </Button>
           </CardContent>
         </Card>
+
+        {/* Performance Monitor */}
+        <PerformanceMonitor />
 
         {/* App Info */}
         <Card>

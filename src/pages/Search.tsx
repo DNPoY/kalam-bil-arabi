@@ -7,6 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Search as SearchIcon, Clock, Users, X } from "lucide-react";
 import BottomNavigation from "@/components/ui/bottom-navigation";
 import { recipes, Recipe } from "@/data/recipes";
+import { RecipeCard } from "@/components/ui/recipe-card";
+import { RecipeComparison } from "@/components/ui/recipe-comparison";
+import { VoiceAssistant } from "@/components/ui/voice-assistant";
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -166,44 +169,39 @@ const Search = () => {
               ) : (
                 <div className="space-y-4">
                   {searchResults.map((recipe) => (
-                    <div 
+                    <RecipeCard
                       key={recipe.id}
-                      onClick={() => navigate(`/recipe/${recipe.id}`)}
-                      className="flex items-center gap-4 p-4 rounded-lg border hover:border-primary/20 hover:shadow-soft cursor-pointer transition-all group"
-                    >
-                      <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                        {recipe.image}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-foreground group-hover:text-primary transition-colors truncate">
-                          {recipe.name}
-                        </h3>
-                        <p className="text-sm text-muted-foreground line-clamp-1">
-                          {recipe.description}
-                        </p>
-                        <div className="flex items-center gap-4 mt-1">
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                            <Clock className="w-3 h-3" />
-                            <span>{recipe.prepTime + recipe.cookTime} د</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                            <Users className="w-3 h-3" />
-                            <span>{recipe.servings}</span>
-                          </div>
-                          <Badge 
-                            variant="outline" 
-                            className={`text-xs ${getDifficultyColor(recipe.difficulty)}`}
-                          >
-                            {recipe.difficulty}
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
+                      recipe={recipe}
+                      compact={true}
+                    />
                   ))}
                 </div>
               )}
             </CardContent>
           </Card>
+        )}
+
+        {/* Voice Search */}
+        {!searchQuery && (
+          <VoiceAssistant 
+            onCommand={(command) => {
+              // استخراج كلمات البحث من الأمر الصوتي
+              const searchTerms = command
+                .replace(/ابحث عن|أريد|أبحث عن/gi, '')
+                .trim();
+              if (searchTerms) {
+                performSearch(searchTerms);
+              }
+            }}
+          />
+        )}
+
+        {/* Recipe Comparison */}
+        {searchResults.length > 1 && (
+          <RecipeComparison 
+            recipes={searchResults}
+            onSelectRecipe={(recipe) => navigate(`/recipe/${recipe.id}`)}
+          />
         )}
 
         {/* Recent Searches */}
