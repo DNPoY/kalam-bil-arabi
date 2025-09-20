@@ -44,12 +44,120 @@ export type Database = {
         }
         Relationships: []
       }
+      recipe_ratings: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number
+          recipe_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          recipe_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          recipe_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_ratings_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipes: {
+        Row: {
+          alternatives: Json | null
+          category: string | null
+          cook_time: number
+          created_at: string
+          created_by: string | null
+          description: string | null
+          difficulty: string | null
+          estimated_cost: number | null
+          id: string
+          image_url: string | null
+          ingredients: string[]
+          instructions: string[]
+          is_featured: boolean | null
+          is_public: boolean | null
+          name: string
+          prep_time: number
+          servings: number
+          updated_at: string
+        }
+        Insert: {
+          alternatives?: Json | null
+          category?: string | null
+          cook_time?: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          difficulty?: string | null
+          estimated_cost?: number | null
+          id?: string
+          image_url?: string | null
+          ingredients?: string[]
+          instructions?: string[]
+          is_featured?: boolean | null
+          is_public?: boolean | null
+          name: string
+          prep_time?: number
+          servings?: number
+          updated_at?: string
+        }
+        Update: {
+          alternatives?: Json | null
+          category?: string | null
+          cook_time?: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          difficulty?: string | null
+          estimated_cost?: number | null
+          id?: string
+          image_url?: string | null
+          ingredients?: string[]
+          instructions?: string[]
+          is_featured?: boolean | null
+          is_public?: boolean | null
+          name?: string
+          prep_time?: number
+          servings?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_recipe_average_rating: {
+        Args: { recipe_id: string }
+        Returns: number
+      }
+      get_recipe_rating_count: {
+        Args: { recipe_id: string }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never
