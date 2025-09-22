@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Plus, Edit, Trash2, Upload, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { ImageUpload } from '@/components/ui/image-upload';
 
 export default function RecipeManagement() {
   const { isAuthenticated, signInAsGuest } = useAuth();
@@ -28,6 +29,7 @@ export default function RecipeManagement() {
   const [editingRecipe, setEditingRecipe] = useState<DatabaseRecipe | null>(null);
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<{
     name: string;
@@ -88,6 +90,7 @@ export default function RecipeManagement() {
     });
     setEditingRecipe(null);
     setImageFile(null);
+    setImagePreview(null);
   };
 
   const openEditDialog = (recipe: DatabaseRecipe) => {
@@ -107,6 +110,7 @@ export default function RecipeManagement() {
       is_public: recipe.is_public,
       is_featured: recipe.is_featured
     });
+    setImagePreview(recipe.image_url);
     setIsDialogOpen(true);
   };
 
@@ -339,11 +343,18 @@ export default function RecipeManagement() {
 
               <div>
                 <Label htmlFor="image">صورة الوصفة</Label>
-                <Input
-                  id="image"
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                <ImageUpload
+                  onImageSelect={(file) => {
+                    setImageFile(file);
+                    const reader = new FileReader();
+                    reader.onload = (e) => setImagePreview(e.target?.result as string);
+                    reader.readAsDataURL(file);
+                  }}
+                  onImageRemove={() => {
+                    setImageFile(null);
+                    setImagePreview(null);
+                  }}
+                  preview={imagePreview}
                 />
               </div>
 

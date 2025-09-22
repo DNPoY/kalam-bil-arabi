@@ -201,6 +201,53 @@ export const useRecipes = () => {
     }
   };
 
+  const getAllRecipes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('recipes')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching all recipes:', error);
+      return [];
+    }
+  };
+
+  const getPendingRecipes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('recipes')
+        .select('*')
+        .eq('is_public', false)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching pending recipes:', error);
+      return [];
+    }
+  };
+
+  const getFeaturedRecipes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('recipes')
+        .select('*')
+        .eq('is_featured', true)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching featured recipes:', error);
+      return [];
+    }
+  };
+
   const rateRecipe = async (recipeId: string, rating: number, comment?: string) => {
     if (!user) {
       toast.error('يجب عليك تسجيل الدخول أولاً');
@@ -262,6 +309,9 @@ export const useRecipes = () => {
     uploadRecipeImage,
     rateRecipe,
     getRecipeRatings,
+    getAllRecipes,
+    getPendingRecipes,
+    getFeaturedRecipes,
     isAuthenticated
   };
 };

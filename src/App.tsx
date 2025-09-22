@@ -18,6 +18,7 @@ import RecipeManagement from "./pages/RecipeManagement";
 import NotFound from "./pages/NotFound";
 import Community from "./pages/Community";
 import AIRecommendations from "./pages/AIRecommendations";
+import AdminPanel from "./pages/AdminPanel";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="/recipe-management" element={<RecipeManagement />} />
           <Route path="/community" element={<Community />} />
           <Route path="/ai-recommendations" element={<AIRecommendations />} />
+          <Route path="/admin" element={<AdminPanel />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

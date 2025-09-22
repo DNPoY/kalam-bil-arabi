@@ -9,6 +9,7 @@ import { OfflineIndicator } from "@/components/ui/offline-indicator";
 import { VoiceAssistant } from "@/components/ui/voice-assistant";
 import { QuickActions } from "@/components/ui/quick-actions";
 import fridgeHero from "@/assets/fridge-hero.jpg";
+import { AdminLink } from "@/components/ui/admin-link";
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -118,6 +119,7 @@ const Index = () => {
               >
                 <ChefHat className="w-5 h-5" />
               </Button>
+              <AdminLink />
               <Button
                 variant="ghost"
                 size="sm"
